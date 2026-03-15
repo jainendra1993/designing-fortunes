@@ -1,0 +1,199 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ready_lms/config/app_constants.dart';
+import 'package:ready_lms/utils/context_less_nav.dart';
+
+import '../../../../config/app_text_style.dart';
+import '../../../../config/theme.dart';
+import '../../../../generated/l10n.dart';
+
+class HistoryCard extends ConsumerWidget {
+  const HistoryCard(
+      {super.key,
+      required this.title,
+      required this.date,
+      required this.amount,
+      required this.transationId,
+      required this.email,
+      required this.onTap});
+
+  final String title;
+  final String date;
+  final String amount;
+  final String transationId;
+  final String email;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(12),
+      decoration: ShapeDecoration(
+          color: context.color.surface,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        spacing: 5,
+        children: [
+          Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyle(context).title.copyWith(
+                fontSize: 12.sp, color: colors(context).titleTextColor),
+          ),
+          Divider(
+            height: 1,
+            color: Color(0xFFF6F7F9),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 2,
+                children: [
+                  Text(
+                    S.of(context).amount,
+                    style: AppTextStyle(context).hintText.copyWith(
+                        fontSize: 13.sp,
+                        color: colors(context).hintTextColor,
+                        height: 1.80),
+                  ),
+                  Text(
+                    "${AppConstants.currencySymbol} $amount",
+                    style: AppTextStyle(context).bodyText.copyWith(
+                        fontSize: 12.sp,
+                        color: Color(0xFF5864FF),
+                        height: 1.80),
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 2,
+                children: [
+                  Text(
+                    date,
+                    style: AppTextStyle(context).bodyText.copyWith(
+                        fontSize: 13.sp, color: Colors.black, height: 1.80),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.green[50],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Center(
+                      child: Text(
+                        S.of(context).paid,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.green,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Divider(
+            height: 1,
+            color: Color(0xFFF6F7F9),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 2,
+                children: [
+                  Text(
+                    S.of(context).transactionId,
+                    style: AppTextStyle(context).hintText.copyWith(
+                        fontSize: 13.sp,
+                        color: colors(context).hintTextColor,
+                        height: 1.80),
+                  ),
+                  Text(
+                    transationId,
+                    style: AppTextStyle(context).bodyText.copyWith(
+                        fontSize: 12.sp,
+                        color: Color(0xFF5864FF),
+                        height: 1.80),
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                spacing: 2,
+                children: [
+                  Text(
+                    S.of(context).emailAddress,
+                    style: AppTextStyle(context).hintText.copyWith(
+                        fontSize: 13.sp,
+                        color: colors(context).hintTextColor,
+                        height: 1.80),
+                  ),
+                  Text(
+                    email,
+                    style: AppTextStyle(context).bodyText.copyWith(
+                        fontSize: 13.sp, color: Colors.black, height: 1.80),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Divider(
+            height: 1,
+            color: Color(0xFFF6F7F9),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              GestureDetector(
+                onTap: onTap,
+                child: Container(
+                  height: 35,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: ShapeDecoration(
+                    color: const Color(0xFF8500FA),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 4,
+                    children: [
+                      Text(
+                        S.of(context).viewDetails,
+                        style: AppTextStyle(context).buttonText.copyWith(
+                            fontSize: 12.sp, color: Colors.white, height: 1.80),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}

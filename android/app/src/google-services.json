@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "294802318964",
+    "project_id": "designing-fortunes",
+    "storage_bucket": "designing-fortunes.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:294802318964:android:18c88b76ba71f1ef85d321",
+        "android_client_info": {
+          "package_name": "com.designingfortunes.fortunes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCynsrBUBZR_YCYWFWBJ_wwhNOr35Z7-Rw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+

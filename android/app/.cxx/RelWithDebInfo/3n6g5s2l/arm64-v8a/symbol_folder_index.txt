@@ -1,0 +1,1 @@
+/Users/razinsoft/project_of_razin/ready_lms_flutter/build/app/intermediates/cxx/RelWithDebInfo/3n6g5s2l/obj/arm64-v8a

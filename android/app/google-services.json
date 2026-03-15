@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "870628320482",
+    "project_id": "ready-lms-b12c3",
+    "storage_bucket": "ready-lms-b12c3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870628320482:android:02cfaf7c2ae8118171eabb",
+        "android_client_info": {
+          "package_name": "com.app.readylms"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXjc6e7PwXjGKBC02HtTgMsICOKrOgKOA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870628320482:android:f99a41b2bb81ced071eabb",
+        "android_client_info": {
+          "package_name": "com.ready.lms"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXjc6e7PwXjGKBC02HtTgMsICOKrOgKOA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870628320482:android:6eae9d134866d9ec71eabb",
+        "android_client_info": {
+          "package_name": "com.readylms.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXjc6e7PwXjGKBC02HtTgMsICOKrOgKOA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

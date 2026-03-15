@@ -1,0 +1,2 @@
+/Users/razinsoft/project_of_razin/ready_lms_flutter/android/app/.cxx/Debug/1r60226k/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/razinsoft/project_of_razin/ready_lms_flutter/android/app/.cxx/Debug/1r60226k/arm64-v8a/CMakeFiles/rebuild_cache.dir
