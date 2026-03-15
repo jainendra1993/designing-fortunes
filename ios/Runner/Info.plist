@@ -79,7 +79,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	//new code
+
 	<key>LSApplicationQueriesSchemes</key>
     <array>
       <string>http</string>
