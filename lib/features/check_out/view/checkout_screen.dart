@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -287,107 +287,104 @@ class _CheckOutScreenViewState extends ConsumerState<CheckOutScreen> {
   }
 }
 
-class PayWithWeb extends ConsumerStatefulWidget {
+class PayWithWeb extends StatefulWidget {
   final String url;
   final int courseID;
 
-  const PayWithWeb({super.key, required this.url, required this.courseID});
+  const PayWithWeb({
+    super.key,
+    required this.url,
+    required this.courseID,
+  });
 
   @override
-  _PayWithWebState createState() => _PayWithWebState();
+  State<PayWithWeb> createState() => _PayWithWebState();
 }
 
-class _PayWithWebState extends ConsumerState<PayWithWeb> {
-  late WebViewController _controller;
+class _PayWithWebState extends State<PayWithWeb> {
+  late final WebViewController controller;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _controller = WebViewController()
-  //     ..setJavaScriptMode(JavaScriptMode.unrestricted)
-  //     ..setNavigationDelegate(
-  //       NavigationDelegate(
-  //         onProgress: (int progress) {
-  //           // Optionally, handle the loading progress here.
-  //         },
-  //         onPageStarted: (String url) {
-  //           if (url.contains('payment/success')) {
-  //             Navigator.pop(context); // Close the dialog.
-  //             paymentSuccessDialog(
-  //                 context: context,
-  //                 id: widget.courseID); // Show success dialog.
-  //           }
-  //           if (url.contains("payment/cancel")) {
-  //             Navigator.pop(context); // Close the dialog.
-  //             // Optionally, show a failure message.
-  //             // showSnackBar(context, 'Payment Failed');
-  //           }
-  //         },
-  //         onPageFinished: (String url) {
-  //           // Optionally, handle when the page finishes loading.
-  //         },
-  //         /* onWebResourceError: (WebResourceError error) {
-  //           // Handle errors here if needed.
-  //         },*/
-  //         onNavigationRequest: (NavigationRequest request) {
-  //           return NavigationDecision.navigate; // Allow navigation.
-  //         },
-  //       ),
-  //     )
-  //     ..loadRequest(Uri.parse(widget.url));
-  // }
-  //
-   InAppWebViewController? webViewController;
+  bool _handled = false; // 🔥 prevent multiple calls
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          // 🔥 MAIN FIX (like old onLoadStart)
+          onPageStarted: (url) {
+            debugPrint("STARTED: $url");
+
+            if (url.contains('payment/success')) {
+              handleSuccess();
+            }
+
+            if (url.contains('payment/cancel')) {
+              handleCancel();
+            }
+          },
+
+          onPageFinished: (url) {
+            debugPrint("FINISHED: $url");
+
+            if (url.contains('payment/success')) {
+              handleSuccess();
+            }
+
+            if (url.contains('payment/cancel')) {
+              handleCancel();
+            }
+          },
+
+          onNavigationRequest: (request) {
+            debugPrint("NAV: ${request.url}");
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.url));
+  }
+
+  // ✅ SUCCESS HANDLER
+  void handleSuccess() {
+    if (_handled) return;
+    _handled = true;
+
+    Navigator.pop(context); // close webview
+
+    Future.delayed(const Duration(milliseconds: 200), () {
+      paymentSuccessDialog(context: context, id: widget.courseID);
+    });
+  }
+
+  // ❌ CANCEL HANDLER
+  void handleCancel() {
+    if (_handled) return;
+    _handled = true;
+
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Payment canceled")),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Payment'),
-      ),
-      body: SafeArea(
-        child: InAppWebView(
-          initialUrlRequest: URLRequest(url: WebUri(widget.url)),
-          onWebViewCreated: (controller) {
-            webViewController = controller;
-          },
-
-          shouldOverrideUrlLoading: (controller, navigationAction) async {
-            final uri = navigationAction.request.url?.toString() ?? '';
-            debugPrint("🧭 Navigating to: $uri");
-
-            return NavigationActionPolicy.ALLOW;
-          },
-
-          onLoadStart: (controller, url) async {
-            debugPrint("➡️ Started loading: $url");
-
-            final uri = url?.toString() ?? '';
-
-            if (uri.contains('payment/success')) {
-              Navigator.pop(context); // Close WebView first
-              await Future.delayed(const Duration(milliseconds: 200));
-              paymentSuccessDialog(context: context, id: widget.courseID);
-            } else if (uri.contains('payment/cancel')) {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Payment canceled")),
-              );
-            }
-          },
-
-          // Optional: accept self-signed SSL certificates (for testing only!)
-          onReceivedServerTrustAuthRequest: (controller, challenge) async {
-            return ServerTrustAuthResponse(
-              action: ServerTrustAuthResponseAction.PROCEED,
-            );
-          },
-        ),
-      ), //WebViewWidget(controller: _controller),
+      appBar: AppBar(title: const Text('Payment')),
+      body: WebViewWidget(controller: controller),
     );
   }
 
-  paymentSuccessDialog({required BuildContext context, required int id}) {
+  // 🎉 YOUR OLD SUCCESS UI (same as screenshot)
+  void paymentSuccessDialog({
+    required BuildContext context,
+    required int id,
+  }) {
     showDialog<void>(
       barrierDismissible: false,
       context: context,
@@ -399,7 +396,8 @@ class _PayWithWebState extends ConsumerState<PayWithWeb> {
         contentPadding: EdgeInsets.zero,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12.w))),
+          borderRadius: BorderRadius.all(Radius.circular(12.w)),
+        ),
         content: Container(
           width: MediaQuery.of(context).size.width - 30.h,
           padding: EdgeInsets.all(24.w),
@@ -410,7 +408,9 @@ class _PayWithWebState extends ConsumerState<PayWithWeb> {
                 width: 60.h,
                 height: 60.h,
                 decoration: const BoxDecoration(
-                    shape: BoxShape.circle, color: AppStaticColor.greenColor),
+                  shape: BoxShape.circle,
+                  color: AppStaticColor.greenColor,
+                ),
                 child: Center(
                   child: Icon(
                     Icons.done_rounded,
@@ -427,14 +427,6 @@ class _PayWithWebState extends ConsumerState<PayWithWeb> {
                   fontSize: 22.sp,
                 ),
               ),
-              // 20.ph,
-              // Text(
-              //   '${S.of(context).yourOrderID}: $id',
-              //   textAlign: TextAlign.center,
-              //   style: AppTextStyle(context)
-              //       .bodyTextSmall
-              //       .copyWith(color: context.color.inverseSurface),
-              // ),
               16.ph,
               Text(
                 '${S.of(context).paymentDes} ${AppConstants.appName}',
@@ -448,16 +440,13 @@ class _PayWithWebState extends ConsumerState<PayWithWeb> {
                 titleColor: context.color.surface,
                 textPaddingVertical: 13.h,
                 onTap: () {
-                  Navigator.pop(context); // Close the dialog.
-                  context.nav.pushNamedAndRemoveUntil(
-                      Routes.myCourseDetails,
-                      arguments: widget.courseID,
-                          (route) => false);
-                  /* context.nav.pushNamedAndRemoveUntil(
-                          Routes.dashboard, (route) => false);
-                      ref
-                          .read(homeTabControllerProvider.notifier)
-                          .state = 1;*/
+                  Navigator.pop(context);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    Routes.myCourseDetails,
+                    (route) => false,
+                    arguments: widget.courseID,
+                  );
                 },
               )
             ],
