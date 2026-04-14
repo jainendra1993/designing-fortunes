@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,6 +14,7 @@ import 'package:ready_lms/routes.dart';
 import 'package:ready_lms/utils/context_less_nav.dart';
 import 'package:ready_lms/utils/entensions.dart';
 import 'package:ready_lms/utils/global_function.dart';
+
 
 
 import '../../../category/controller/category.dart';
@@ -31,6 +33,8 @@ class AllCourseScreen extends ConsumerStatefulWidget {
 
 class _AllCourseViewState extends ConsumerState<AllCourseScreen> {
   bool isPrepareShortFilter = false;
+
+
   final loadingMore = StateProvider<bool>((ref) {
     return false;
   });
@@ -53,28 +57,41 @@ class _AllCourseViewState extends ConsumerState<AllCourseScreen> {
     });
   }
 
-  Future<void> loadData({bool isRefresh = false}) async {
-    if (isRefresh) {
-      currentPage = 1;
-      hasMoreData = true;
-    }
-    await ref
-        .read(courseController.notifier)
-        .getAllCourse(isRefresh: isRefresh, currentPage: currentPage, query: {
-      if (widget.showMostPopular) 'sort': 'view_count',
-      if (selectedCategory!.id != null) 'category_id': selectedCategory!.id
-    }).then((value) {
-      if (value.isSuccess) {
-        if (value.response) {
-          currentPage++;
-        }
-        hasMoreData = value.response;
-        if (!hasMoreData) {
-          if (mounted) setState(() {});
-        }
-      }
-    });
-  }
+ Future<void> loadData({bool isRefresh = false}) async {
+   if (isRefresh) {
+     currentPage = 1;
+     hasMoreData = true;
+   }
+
+   await ref
+       .read(courseController.notifier)
+       .getAllCourse(
+         isRefresh: isRefresh,
+         currentPage: currentPage,
+         query: {
+           if (widget.showMostPopular) 'sort': 'view_count',
+           if (selectedCategory!.id != null)
+             'category_id': selectedCategory!.id
+         },
+       )
+       .then((value) async {
+     if (value.isSuccess) {
+
+       /// Existing Pagination Logic
+       if (value.response) {
+         currentPage++;
+       }
+
+       hasMoreData = value.response;
+
+       if (!hasMoreData) {
+         if (mounted) setState(() {});
+       }
+     }
+   });
+ }
+
+
 
   @override
   Widget build(BuildContext context) {
