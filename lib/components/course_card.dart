@@ -84,37 +84,38 @@ class CourseCard extends StatelessWidget {
                   12.ph,
                   Row(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            model.isFree == true
-                                ? S.of(context).free
-                                : model.price != null
-                                    ? "${AppConstants.currencySymbol}${model.price}"
-                                    : "${AppConstants.currencySymbol}${model.price ?? model.regularPrice}",
-                            style: AppTextStyle(context).subTitle,
-                          ),
-                          4.pw,
-                          model.price != null || model.isFree == true
-                              ? model.regularPrice != null
-                                  ? Text(
-                                      '${AppConstants.currencySymbol}${model.regularPrice}',
-                                      style: AppTextStyle(context)
-                                          .buttonText
-                                          .copyWith(
-                                            color:
-                                                colors(context).hintTextColor,
-                                            decoration:
-                                                TextDecoration.lineThrough,
-                                            decorationColor:
-                                                colors(context).hintTextColor,
-                                          ),
-                                    )
-                                  : const SizedBox()
-                              : const SizedBox(),
-                        ],
-                      ),
+//                       Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             model.isFree == true
+//                                 ? S.of(context).free
+//                                 : model.price != null
+//                                     ? "${AppConstants.currencySymbol}${model.price}"
+//                                     : "${AppConstants.currencySymbol}${model.price ?? model.regularPrice}",
+//                             style: AppTextStyle(context).subTitle,
+//                           ),
+//                           4.pw,
+//                           model.price != null || model.isFree == true
+//                               ? model.regularPrice != null
+//                                   ? Text(
+//                                       '${AppConstants.currencySymbol}${model.regularPrice}',
+//                                       style: AppTextStyle(context)
+//                                           .buttonText
+//                                           .copyWith(
+//                                             color:
+//                                                 colors(context).hintTextColor,
+//                                             decoration:
+//                                                 TextDecoration.lineThrough,
+//                                             decorationColor:
+//                                                 colors(context).hintTextColor,
+//                                           ),
+//                                     )
+//                                   : const SizedBox()
+//                               : const SizedBox(),
+//                         ],
+//                       ),
+
                       const Spacer(),
                       AppButton(
                         title: S.of(context).details,

@@ -19,12 +19,222 @@ import '../../../courses/controller/course.dart';
 import '../../../courses/model/course_list.dart';
 import '../../../courses/view/new_course/course_new_screen.dart';
 
+// class FavoriteCard extends StatelessWidget {
+//   const FavoriteCard(
+//       {super.key,
+//       required this.onTap,
+//       required this.canEnroll,
+//       required this.model});
+//
+//   final bool canEnroll;
+//   final VoidCallback onTap;
+//   final CourseListModel model;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: () {
+//         if (!canEnroll) {
+//           context.nav.pushNamed(Routes.myCourseDetails, arguments: model.id);
+//         } else {
+//           context.nav
+//               .pushNamed(Routes.courseNew, arguments: {'courseId': model.id});
+//         }
+//       },
+//       child: Container(
+//         width: double.infinity,
+//         decoration: BoxDecoration(
+//             borderRadius: AppComponents.defaultBorderRadiusSmall,
+//             color: context.color.onSecondary),
+//         padding: EdgeInsets.all(
+//           16.h,
+//         ),
+//         margin: EdgeInsets.only(bottom: 12.h, left: 16.h, right: 16.h),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Row(
+//               children: [
+//                 Container(
+//                   width: 16.h,
+//                   height: 16.h,
+//                   decoration: const BoxDecoration(
+//                     shape: BoxShape.circle,
+//                   ),
+//                   child: ClipRRect(
+//                     borderRadius: BorderRadius.circular(40.h),
+//                     child: FadeInImage.assetNetwork(
+//                       placeholder: 'assets/images/spinner.gif',
+//                       image: model.instructor.profilePicture,
+//                       fit: BoxFit.cover,
+//                     ),
+//                   ),
+//                 ),
+//                 6.pw,
+//                 Text(
+//                   model.instructor.name,
+//                   style: AppTextStyle(context).bodyTextSmall.copyWith(
+//                       color: context.color.inverseSurface, fontSize: 12.sp),
+//                 ),
+//                 const Spacer(),
+//                 GestureDetector(
+//                   onTap: onTap,
+//                   child: SvgPicture.asset(
+//                     'assets/svg/ic_heart.svg',
+//                     width: 20.h,
+//                     height: 20.h,
+//                   ),
+//                 )
+//               ],
+//             ),
+//             12.ph,
+//             Text(
+//               model.title,
+//               style: AppTextStyle(context).bodyTextSmall.copyWith(),
+//             ),
+//             8.ph,
+//             CourseShortsInfo(
+//                 totalTime: ApGlobalFunctions.convertMinutesToHours(
+//                     model.totalDuration, context),
+//                 totalEnrolled: '${model.studentCount}',
+//                 rating: double.tryParse('${model.averageRating}')!
+//                     .toStringAsFixed(1)
+//                     .toString(),
+//                 totalRating: '(${model.reviewCount})'),
+//             12.ph,
+//             if (canEnroll)
+//               Row(
+//                 children: [
+//                   if (model.isFree == true)
+//                     // If the course is free, display "Free" and show regular price with strike-through
+//                     Column(
+//                       crossAxisAlignment: CrossAxisAlignment.start,
+//                       children: [
+//                         Text(
+//                           S.of(context).free, // Displays "Free" label
+//                           style: AppTextStyle(context).subTitle,
+//                         ),
+//                         4.ph, // Padding between Free and regular price
+//                         model.price != null || model.isFree == true
+//                             ? model.regularPrice != null
+//                                 ? Text(
+//                                     '${AppConstants.currencySymbol}${model.regularPrice}',
+//                                     // Show regular price
+//                                     style: AppTextStyle(context)
+//                                         .buttonText
+//                                         .copyWith(
+//                                           color: colors(context).hintTextColor,
+//                                           decoration: TextDecoration
+//                                               .lineThrough, // Strike-through effect
+//                                           decorationColor:
+//                                               colors(context).hintTextColor,
+//                                         ),
+//                                   )
+//                                 : const SizedBox()
+//                             : const SizedBox(),
+//                       ],
+//                     )
+//                   else ...[
+//                     // If the course is not free, display the current price and regular price
+//                     Text(
+//                       '${AppConstants.currencySymbol}${model.price ?? model.regularPrice}',
+//                       style: AppTextStyle(context).subTitle,
+//                     ),
+//                     4.pw,
+//                     model.price != null
+//                         ? Text(
+//                             '${AppConstants.currencySymbol}${model.regularPrice}',
+//                             style: AppTextStyle(context).buttonText.copyWith(
+//                                   color: colors(context).hintTextColor,
+//                                   decoration: TextDecoration
+//                                       .lineThrough, // Strike-through effect
+//                                   decorationColor:
+//                                       colors(context).hintTextColor,
+//                                 ),
+//                           )
+//                         : const SizedBox()
+//                   ],
+//
+//                   // Text(
+//                   //   '${AppConstants.currencySymbol}${model.price}',
+//                   //   style: AppTextStyle(context).subTitle,
+//                   // ),
+//                   // 4.pw,
+//                   // Text(
+//                   //   '${AppConstants.currencySymbol}${model.regularPrice}',
+//                   //   style: AppTextStyle(context).buttonText.copyWith(
+//                   //         color: colors(context).hintTextColor,
+//                   //         decoration: TextDecoration.lineThrough,
+//                   //         decorationColor: colors(context).hintTextColor,
+//                   //       ),
+//                   // ),
+//
+//                   const Spacer(),
+//                   Consumer(builder: (context, ref, _) {
+//                     return AppButton(
+//                       title: S.of(context).enrolNow,
+//                       titleColor: context.color.surface,
+//                       onTap: () {
+//                         if (model.isFree == true) {
+//                           ref
+//                               .read(freeCourseEnrollController.notifier)
+//                               .freeCourseEnroll(courseId: model.id)
+//                               .then((response) {
+//                             if (response.isSuccess) {
+//                               courseEnrollSuccessDialog(
+//                                 context: context,
+//                                 ref: ref,
+//                               );
+//                             }
+//                           });
+//                         } else {
+//                           context.nav.pushNamed(Routes.checkOutScreen,
+//                               arguments: {'courseId': model.id});
+//                         }
+//                       },
+//                     );
+//                   })
+//                 ],
+//               ),
+//             if (!canEnroll)
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                 children: [
+//                   Text(
+//                     S.of(context).enrolled,
+//                     style: AppTextStyle(context)
+//                         .bodyText
+//                         .copyWith(color: colors(context).primaryColor),
+//                   ),
+//                   AppOutlineButton(
+//                     title: S.of(context).viewCourse,
+//                     borderRadius: 8.r,
+//                     fontSize: 12.sp,
+//                     textPaddingHorizontal: 16.w,
+//                     textPaddingVertical: 10.w,
+//                     fontWeight: FontWeight.w400,
+//                     width: null,
+//                     onTap: () {
+//                       context.nav.pushNamed(Routes.myCourseDetails,
+//                           arguments: model.id);
+//                     },
+//                   )
+//                 ],
+//               )
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class FavoriteCard extends StatelessWidget {
-  const FavoriteCard(
-      {super.key,
-      required this.onTap,
-      required this.canEnroll,
-      required this.model});
+  const FavoriteCard({
+    super.key,
+    required this.onTap,
+    required this.canEnroll,
+    required this.model,
+  });
 
   final bool canEnroll;
   final VoidCallback onTap;
@@ -32,49 +242,46 @@ class FavoriteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isEnrolled = !canEnroll;
+
     return GestureDetector(
       onTap: () {
-        if (!canEnroll) {
-          context.nav.pushNamed(Routes.myCourseDetails, arguments: model.id);
-        } else {
-          context.nav
-              .pushNamed(Routes.courseNew, arguments: {'courseId': model.id});
-        }
+        context.nav.pushNamed(
+          Routes.myCourseDetails,
+          arguments: model.id,
+        );
       },
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-            borderRadius: AppComponents.defaultBorderRadiusSmall,
-            color: context.color.onSecondary),
-        padding: EdgeInsets.all(
-          16.h,
+          borderRadius: AppComponents.defaultBorderRadiusSmall,
+          color: context.color.onSecondary,
         ),
+        padding: EdgeInsets.all(16.h),
         margin: EdgeInsets.only(bottom: 12.h, left: 16.h, right: 16.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            /// Header
             Row(
               children: [
-                Container(
-                  width: 16.h,
-                  height: 16.h,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(40.h),
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/spinner.gif',
-                      image: model.instructor.profilePicture,
-                      fit: BoxFit.cover,
-                    ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(40.h),
+                  child: FadeInImage.assetNetwork(
+                    placeholder: 'assets/images/spinner.gif',
+                    image: model.instructor.profilePicture,
+                    width: 16.h,
+                    height: 16.h,
+                    fit: BoxFit.cover,
                   ),
                 ),
                 6.pw,
                 Text(
                   model.instructor.name,
                   style: AppTextStyle(context).bodyTextSmall.copyWith(
-                      color: context.color.inverseSurface, fontSize: 12.sp),
+                        color: context.color.inverseSurface,
+                        fontSize: 12.sp,
+                      ),
                 ),
                 const Spacer(),
                 GestureDetector(
@@ -87,127 +294,47 @@ class FavoriteCard extends StatelessWidget {
                 )
               ],
             ),
+
             12.ph,
+
+            /// Title
             Text(
               model.title,
-              style: AppTextStyle(context).bodyTextSmall.copyWith(),
+              style: AppTextStyle(context).bodyTextSmall,
             ),
+
             8.ph,
+
+            /// Info
             CourseShortsInfo(
-                totalTime: ApGlobalFunctions.convertMinutesToHours(
-                    model.totalDuration, context),
-                totalEnrolled: '${model.studentCount}',
-                rating: double.tryParse('${model.averageRating}')!
-                    .toStringAsFixed(1)
-                    .toString(),
-                totalRating: '(${model.reviewCount})'),
+              totalTime: ApGlobalFunctions.convertMinutesToHours(
+                  model.totalDuration, context),
+              totalEnrolled: '${model.studentCount}',
+              rating: double.tryParse('${model.averageRating}')!
+                  .toStringAsFixed(1),
+              totalRating: '(${model.reviewCount})',
+            ),
+
             12.ph,
-            if (canEnroll)
-              Row(
-                children: [
-                  if (model.isFree == true)
-                    // If the course is free, display "Free" and show regular price with strike-through
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          S.of(context).free, // Displays "Free" label
-                          style: AppTextStyle(context).subTitle,
-                        ),
-                        4.ph, // Padding between Free and regular price
-                        model.price != null || model.isFree == true
-                            ? model.regularPrice != null
-                                ? Text(
-                                    '${AppConstants.currencySymbol}${model.regularPrice}',
-                                    // Show regular price
-                                    style: AppTextStyle(context)
-                                        .buttonText
-                                        .copyWith(
-                                          color: colors(context).hintTextColor,
-                                          decoration: TextDecoration
-                                              .lineThrough, // Strike-through effect
-                                          decorationColor:
-                                              colors(context).hintTextColor,
-                                        ),
-                                  )
-                                : const SizedBox()
-                            : const SizedBox(),
-                      ],
-                    )
-                  else ...[
-                    // If the course is not free, display the current price and regular price
-                    Text(
-                      '${AppConstants.currencySymbol}${model.price ?? model.regularPrice}',
-                      style: AppTextStyle(context).subTitle,
-                    ),
-                    4.pw,
-                    model.price != null
-                        ? Text(
-                            '${AppConstants.currencySymbol}${model.regularPrice}',
-                            style: AppTextStyle(context).buttonText.copyWith(
-                                  color: colors(context).hintTextColor,
-                                  decoration: TextDecoration
-                                      .lineThrough, // Strike-through effect
-                                  decorationColor:
-                                      colors(context).hintTextColor,
-                                ),
-                          )
-                        : const SizedBox()
-                  ],
 
-                  // Text(
-                  //   '${AppConstants.currencySymbol}${model.price}',
-                  //   style: AppTextStyle(context).subTitle,
-                  // ),
-                  // 4.pw,
-                  // Text(
-                  //   '${AppConstants.currencySymbol}${model.regularPrice}',
-                  //   style: AppTextStyle(context).buttonText.copyWith(
-                  //         color: colors(context).hintTextColor,
-                  //         decoration: TextDecoration.lineThrough,
-                  //         decorationColor: colors(context).hintTextColor,
-                  //       ),
-                  // ),
+            /// 🔒 Access status (replaces price + enroll)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  isEnrolled
+                      ? "Enrolled"
+                      : "Available for enrolled users",
+                  style: AppTextStyle(context).bodyText.copyWith(
+                        color: isEnrolled
+                            ? colors(context).primaryColor
+                            : colors(context).hintTextColor,
+                      ),
+                ),
 
-                  const Spacer(),
-                  Consumer(builder: (context, ref, _) {
-                    return AppButton(
-                      title: S.of(context).enrolNow,
-                      titleColor: context.color.surface,
-                      onTap: () {
-                        if (model.isFree == true) {
-                          ref
-                              .read(freeCourseEnrollController.notifier)
-                              .freeCourseEnroll(courseId: model.id)
-                              .then((response) {
-                            if (response.isSuccess) {
-                              courseEnrollSuccessDialog(
-                                context: context,
-                                ref: ref,
-                              );
-                            }
-                          });
-                        } else {
-                          context.nav.pushNamed(Routes.checkOutScreen,
-                              arguments: {'courseId': model.id});
-                        }
-                      },
-                    );
-                  })
-                ],
-              ),
-            if (!canEnroll)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    S.of(context).enrolled,
-                    style: AppTextStyle(context)
-                        .bodyText
-                        .copyWith(color: colors(context).primaryColor),
-                  ),
+                if (isEnrolled)
                   AppOutlineButton(
-                    title: S.of(context).viewCourse,
+                    title: "View Course",
                     borderRadius: 8.r,
                     fontSize: 12.sp,
                     textPaddingHorizontal: 16.w,
@@ -215,12 +342,14 @@ class FavoriteCard extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                     width: null,
                     onTap: () {
-                      context.nav.pushNamed(Routes.myCourseDetails,
-                          arguments: model.id);
+                      context.nav.pushNamed(
+                        Routes.myCourseDetails,
+                        arguments: model.id,
+                      );
                     },
                   )
-                ],
-              )
+              ],
+            )
           ],
         ),
       ),

@@ -232,27 +232,27 @@ class _OnboardingWidgetState extends ConsumerState<OnboardingWidget> {
                     ),
                   ),
                   const Spacer(),
-                  AppButton(
-                    title: S.of(context).getStarted,
-                    titleColor: context.color.surface,
-                    textPaddingVertical: 15.h,
-                    onTap: () async {
-                      await ref
-                          .read(hiveStorageProvider)
-                          .setFirstOpenValue(value: false);
-                      if (context.mounted) {
-                        context.nav.pushNamedAndRemoveUntil(
-                            Routes.dashboard, (route) => false);
-                      }
-                    },
-                    icon: SvgPicture.asset(
-                      'assets/svg/ic_right_arrow.svg',
-                      color: context.color.surface,
-                      width: 24.h,
-                      height: 24.h,
-                    ),
-                  ),
-                  16.ph,
+//                   AppButton(
+//                     title: S.of(context).getStarted,
+//                     titleColor: context.color.surface,
+//                     textPaddingVertical: 15.h,
+//                     onTap: () async {
+//                       await ref
+//                           .read(hiveStorageProvider)
+//                           .setFirstOpenValue(value: false);
+//                       if (context.mounted) {
+//                         context.nav.pushNamedAndRemoveUntil(
+//                             Routes.dashboard, (route) => false);
+//                       }
+//                     },
+//                     icon: SvgPicture.asset(
+//                       'assets/svg/ic_right_arrow.svg',
+//                       color: context.color.surface,
+//                       width: 24.h,
+//                       height: 24.h,
+//                     ),
+//                   ),
+//                   16.ph,
                   AppOutlineButton(
                     title: S.of(context).loginWithPassword,
                     borderRadius: 12.r,

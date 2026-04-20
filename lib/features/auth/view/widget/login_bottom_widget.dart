@@ -209,38 +209,38 @@ class _LoginBottomWidgetState extends State<LoginBottomWidget> {
 
                   24.ph,
 
-                  Row(
-                    children: [
-                      Text(
-                        S.of(context).dontHaveAccount,
-                        style:
-                        AppTextStyle(context).bodyTextSmall,
-                      ),
-                      4.pw,
-                      GestureDetector(
-                        onTap: () {
-                          context.nav.pop();
-                          ApGlobalFunctions.showBottomSheet(
-                            context: context,
-                            widget:
-                            const RegistrationBottomWidget(),
-                          );
-                        },
-                        child: Text(
-                          S.of(context).signUp,
-                          style: AppTextStyle(context)
-                              .bodyTextSmall
-                              .copyWith(
-                            color: context.color.primary,
-                            decoration:
-                            TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+//                   Row(
+//                     children: [
+//                       Text(
+//                         S.of(context).dontHaveAccount,
+//                         style:
+//                         AppTextStyle(context).bodyTextSmall,
+//                       ),
+//                       4.pw,
+//                       GestureDetector(
+//                         onTap: () {
+//                           context.nav.pop();
+//                           ApGlobalFunctions.showBottomSheet(
+//                             context: context,
+//                             widget:
+//                             const RegistrationBottomWidget(),
+//                           );
+//                         },
+//                         child: Text(
+//                           S.of(context).signUp,
+//                           style: AppTextStyle(context)
+//                               .bodyTextSmall
+//                               .copyWith(
+//                             color: context.color.primary,
+//                             decoration:
+//                             TextDecoration.underline,
+//                           ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
 
-                  16.ph,
+//                   16.ph,
                 ],
               ),
             ),

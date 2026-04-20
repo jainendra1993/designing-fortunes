@@ -207,31 +207,50 @@ class _AllCourseViewState extends ConsumerState<AllCourseScreen> {
                                                 marginBottom: 15,
                                                 width: double.infinity,
                                                 height: 160,
-                                                onTap: () {
-                                                  if (ref
-                                                      .read(courseController)
-                                                      .courseList[index]
-                                                      .isEnrolled) {
-                                                    context.nav.pushNamed(
-                                                        Routes.myCourseDetails,
-                                                        arguments: ref
-                                                            .read(
-                                                                courseController)
-                                                            .courseList[index]
-                                                            .id);
-                                                  } else {
-                                                    context.nav.pushNamed(
-                                                        Routes.courseNew,
-                                                        arguments: {
-                                                          'courseId': ref
-                                                              .read(
-                                                                  courseController)
-                                                              .courseList[index]
-                                                              .id,
-                                                        });
-                                                  }
-                                                },
-                                              ),
+//                                                 onTap: () {
+//                                                   if (ref
+//                                                       .read(courseController)
+//                                                       .courseList[index]
+//                                                       .isEnrolled) {
+//                                                     context.nav.pushNamed(
+//                                                         Routes.myCourseDetails,
+//                                                         arguments: ref
+//                                                             .read(
+//                                                                 courseController)
+//                                                             .courseList[index]
+//                                                             .id);
+//                                                   } else {
+//                                                     context.nav.pushNamed(
+//                                                         Routes.courseNew,
+//                                                         arguments: {
+//                                                           'courseId': ref
+//                                                               .read(
+//                                                                   courseController)
+//                                                               .courseList[index]
+//                                                               .id,
+//                                                         });
+//                                                   }
+//                                                 },
+
+                                                 onTap: () {
+                                                   final course = ref.read(courseController).courseList[index];
+
+                                                   if (course.isEnrolled) {
+                                                     // ✅ Enrolled → open course
+                                                     context.nav.pushNamed(
+                                                       Routes.myCourseDetails,
+                                                       arguments: course.id,
+                                                     );
+                                                   } else {
+                                                     // 🔒 Not enrolled → show locked screen
+                                                     context.nav.pushNamed(
+                                                       Routes.courseNew,
+                                                       arguments: {'courseId': course.id},
+                                                     );
+                                                   }
+                                                 },
+
+                                                ),
                                             ),
                                           ),
                                           if (ref
