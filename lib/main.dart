@@ -18,11 +18,17 @@ import 'package:ready_lms/routes.dart';
 import 'package:ready_lms/utils/global_function.dart';
 import 'package:ready_lms/utils/api_client.dart';
 
+import 'package:ready_lms/service/payment_service.dart';
+
 import 'firebase_options.dart';
 import 'features/notification/controller/notifactionhandler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+   // ✅ ADD THIS LINE
+    PaymentService().initialize();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

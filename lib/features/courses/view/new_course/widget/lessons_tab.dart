@@ -22,6 +22,11 @@ import 'package:ready_lms/utils/entensions.dart';
 import 'package:ready_lms/utils/global_function.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'dart:io';
+import 'package:ready_lms/features/courses/data/course.dart';
+import 'package:ready_lms/service/payment_service.dart';
+
+
 import '../../../controller/course.dart';
 import '../../../controller/my_course_details.dart';
 import '../../my_course_details/component/content_details_bottom_widget.dart';
@@ -378,8 +383,85 @@ class _LessonItemCardState extends ConsumerState<LessonItemCard> {
       ),
     );
   }
+//
+//   enrolNowDialog({
+//     required BuildContext context,
+//   }) {
+//     showDialog<void>(
+//       context: context,
+//       builder: (context) => AlertDialog(
+//         surfaceTintColor: context.color.surface,
+//         shadowColor: context.color.surface,
+//         backgroundColor: context.color.surface,
+//         insetPadding: EdgeInsets.zero,
+//         contentPadding: EdgeInsets.zero,
+//         clipBehavior: Clip.antiAliasWithSaveLayer,
+//         shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.all(Radius.circular(12.w))),
+//         content: Container(
+//           width: MediaQuery.of(context).size.width - 30.h,
+//           padding: EdgeInsets.all(24.w),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               Text(
+//                 S.of(context).enrolDes,
+//                 textAlign: TextAlign.center,
+//                 style: AppTextStyle(context).bodyText.copyWith(
+//                       fontSize: 22.sp,
+//                       fontWeight: FontWeight.w500,
+//                     ),
+//               ),
+//               20.ph,
+//               SizedBox(
+//                 width: double.infinity,
+//                 child: Row(
+//                   children: [
+//                     Expanded(
+//                         child: AppOutlineButton(
+//                       title: S.of(context).cancel,
+//                       width: double.infinity,
+//                       buttonColor: context.color.surface,
+//                       titleColor: AppStaticColor.redColor,
+//                       textPaddingVertical: 16.h,
+//                       borderRadius: 12.r,
+//                       onTap: () => context.nav.pop(),
+//                     )),
+//                     12.pw,
+//                     Expanded(
+//                       child: Consumer(
+//                         builder: (context, ref, _) {
+//                           return AppButton(
+//                             title: S.of(context).enrolNow,
+//                             width: double.infinity,
+//                             titleColor: context.color.surface,
+//                             textPaddingVertical: 16.h,
+//                             onTap: () async {
+//                               context.nav.pop();
+//                               context.nav.pushNamed(Routes.checkOutScreen,
+//                                   arguments: {
+//                                     'courseId': ref
+//                                         .read(courseController)
+//                                         .courseDetails!
+//                                         .course
+//                                         .id
+//                                   });
+//                             },
+//                           );
+//                         },
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               )
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
-  enrolNowDialog({
+ enrolNowDialog({
     required BuildContext context,
   }) {
     showDialog<void>(
@@ -413,15 +495,16 @@ class _LessonItemCardState extends ConsumerState<LessonItemCard> {
                 child: Row(
                   children: [
                     Expanded(
-                        child: AppOutlineButton(
-                      title: S.of(context).cancel,
-                      width: double.infinity,
-                      buttonColor: context.color.surface,
-                      titleColor: AppStaticColor.redColor,
-                      textPaddingVertical: 16.h,
-                      borderRadius: 12.r,
-                      onTap: () => context.nav.pop(),
-                    )),
+                      child: AppOutlineButton(
+                        title: S.of(context).cancel,
+                        width: double.infinity,
+                        buttonColor: context.color.surface,
+                        titleColor: AppStaticColor.redColor,
+                        textPaddingVertical: 16.h,
+                        borderRadius: 12.r,
+                        onTap: () => context.nav.pop(),
+                      ),
+                    ),
                     12.pw,
                     Expanded(
                       child: Consumer(
@@ -432,15 +515,74 @@ class _LessonItemCardState extends ConsumerState<LessonItemCard> {
                             titleColor: context.color.surface,
                             textPaddingVertical: 16.h,
                             onTap: () async {
-                              context.nav.pop();
-                              context.nav.pushNamed(Routes.checkOutScreen,
-                                  arguments: {
-                                    'courseId': ref
-                                        .read(courseController)
-                                        .courseDetails!
-                                        .course
-                                        .id
-                                  });
+                              context.nav.pop(); // close dialog first
+
+                              final courseId = ref
+                                  .read(courseController)
+                                  .courseDetails!
+                                  .course
+                                  .id;
+
+                              final price = double.tryParse(
+                                      ref
+                                              .read(courseController)
+                                              .courseDetails!
+                                              .course
+                                              .price
+                                              .toString() ??
+                                          '0') ??
+                                  0.0;
+
+                              if (Platform.isIOS) {
+                                // ─── iOS → Apple IAP ───────────────────────
+                                final productId = appleProductId(courseId);
+                                await PaymentService().purchaseProduct(
+                                  productId: productId,
+                                 onSuccess: (purchase) async {
+                                   final receipt = purchase
+                                       .verificationData
+                                       .serverVerificationData;
+                                   final courseId2 = ref
+                                       .read(courseController)
+                                       .courseDetails!
+                                       .course
+                                       .id;
+                                   try {
+                                     final response = await ref
+                                         .read(courseServiceProvider)
+                                         .verifyAppleIAP({
+                                       'course_id': courseId2,
+                                       'receipt': receipt,
+                                       'transaction_id': purchase.purchaseID ?? '',
+                                     });
+                                     if (response.statusCode == 200) {
+                                       if (context.mounted) {
+                                         Navigator.pushNamedAndRemoveUntil(
+                                           context,
+                                           Routes.myCourseDetails,
+                                           (route) => false,
+                                           arguments: courseId2,
+                                         );
+                                       }
+                                     } else {
+                                       EasyLoading.showError('Verification failed. Contact support.');
+                                     }
+                                   } catch (e) {
+                                     EasyLoading.showError('Verification failed. Contact support.');
+                                   }
+                                 },
+                                  onError: (error) {
+                                    EasyLoading.showError(error);
+                                  },
+                                  onCancelled: () {},
+                                );
+                              } else {
+                                // ─── Android → existing checkout screen ────
+                                context.nav.pushNamed(
+                                  Routes.checkOutScreen,
+                                  arguments: {'courseId': courseId},
+                                );
+                              }
                             },
                           );
                         },
@@ -455,6 +597,7 @@ class _LessonItemCardState extends ConsumerState<LessonItemCard> {
       ),
     );
   }
+
 
   void showBottomWidget({bool makeUpdate = false}) {
     ApGlobalFunctions.showBottomSheet(

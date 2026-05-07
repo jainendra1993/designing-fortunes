@@ -58,3 +58,7 @@ class CourseServiceProvider extends Course {
 }
 
 final courseServiceProvider = Provider((ref) => CourseServiceProvider(ref));
+
+Future<Response> verifyAppleIAP(Map<String, dynamic> data) async {
+  return await _dio.post('/verify-apple-iap', data: data);
+}
